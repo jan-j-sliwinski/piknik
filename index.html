@@ -10,6 +10,8 @@
         <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
         <link rel="stylesheet" href="css/qgis2web.css">
         <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/MarkerCluster.css">
+        <link rel="stylesheet" href="css/MarkerCluster.Default.css">
         <link rel="stylesheet" href="css/leaflet.photon.css">
         <style>
         html, body, #map {
@@ -35,11 +37,13 @@
         <script src="js/labelgun.min.js"></script>
         <script src="js/labels.js"></script>
         <script src="js/leaflet.photon.js"></script>
-        <script src="data/namiot1_1.js"></script>
+        <script src="js/leaflet.markercluster.js"></script>
+        <script src="data/tekstpiknik_1.js"></script>
+        <script src="data/Refactored_2.js"></script>
         <script>
         var map = L.map('map', {
             zoomControl:false, maxZoom:28, minZoom:1
-        }).fitBounds([[54.45001297775895,18.561983141399605],[54.45185280511766,18.56502270587547]]);
+        })
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -109,25 +113,85 @@
         }).addTo(map);
         var bounds_group = new L.featureGroup([]);
         function setBounds() {
+            if (bounds_group.getLayers().length) {
+                map.fitBounds(bounds_group.getBounds());
+            }
         }
-        map.createPane('pane_bitmap_modified_0');
-        map.getPane('pane_bitmap_modified_0').style.zIndex = 400;
-        var img_bitmap_modified_0 = 'data/bitmap_modified_0.png';
-        var img_bounds_bitmap_modified_0 = [[54.450313697262835,18.562205949873785],[54.451666960963884,18.564852212992953]];
-        var layer_bitmap_modified_0 = new L.imageOverlay(img_bitmap_modified_0,
-                                              img_bounds_bitmap_modified_0,
-                                              {pane: 'pane_bitmap_modified_0'});
-        bounds_group.addLayer(layer_bitmap_modified_0);
-        map.addLayer(layer_bitmap_modified_0);
-        function pop_namiot1_1(feature, layer) {
+        map.createPane('pane_GoogleSatelliteHybrid_0');
+        map.getPane('pane_GoogleSatelliteHybrid_0').style.zIndex = 400;
+        var layer_GoogleSatelliteHybrid_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleSatelliteHybrid_0',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_GoogleSatelliteHybrid_0;
+        map.addLayer(layer_GoogleSatelliteHybrid_0);
+        function pop_tekstpiknik_1(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
-                        <th scope="row">Numer</th>\
-                        <td class="visible-with-data" id="Numer">' + (feature.properties['Numer'] !== null ? autolinker.link(String(feature.properties['Numer']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                        <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(String(feature.properties['id']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tekst'] !== null ? autolinker.link(String(feature.properties['tekst']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_tekstpiknik_1_0() {
+            return {
+                pane: 'pane_tekstpiknik_1',
+                interactive: false,
+            }
+        }
+        map.createPane('pane_tekstpiknik_1');
+        map.getPane('pane_tekstpiknik_1').style.zIndex = 401;
+        map.getPane('pane_tekstpiknik_1').style['mix-blend-mode'] = 'normal';
+        var layer_tekstpiknik_1 = new L.geoJson(json_tekstpiknik_1, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_tekstpiknik_1',
+            layerName: 'layer_tekstpiknik_1',
+            pane: 'pane_tekstpiknik_1',
+            onEachFeature: pop_tekstpiknik_1,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_tekstpiknik_1_0(feature));
+            },
+        });
+        var cluster_tekstpiknik_1 = new L.MarkerClusterGroup({showCoverageOnHover: false,
+            spiderfyDistanceMultiplier: 2});
+        cluster_tekstpiknik_1.addLayer(layer_tekstpiknik_1);
+
+        bounds_group.addLayer(layer_tekstpiknik_1);
+        cluster_tekstpiknik_1.addTo(map);
+        function pop_Refactored_2(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Stoisko</th>\
+                        <td class="visible-with-data" id="Stoisko">' + (feature.properties['Stoisko'] !== null ? autolinker.link(String(feature.properties['Stoisko']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Tytuł</th>\
+                        <td class="visible-with-data" id="Tytuł">' + (feature.properties['Tytuł'] !== null ? autolinker.link(String(feature.properties['Tytuł']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
                         <th scope="row">Opis</th>\
                         <td class="visible-with-data" id="Opis">' + (feature.properties['Opis'] !== null ? autolinker.link(String(feature.properties['Opis']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Numer'] !== null ? autolinker.link(String(feature.properties['Numer']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
                         <td colspan="2">' + (feature.properties['Logo'] !== null ? '<img src="images/' + String(feature.properties['Logo']).replace(/[\\/:]/g, '_').trim().replace(/'/g, '\'').replace(/"/g, '&quot;') + '">' : '') + '</td>\
@@ -139,10 +203,15 @@
 			});
 			layer.bindPopup(content, { maxHeight: 400 });
         }
-
-        function style_namiot1_1_0() {
-            return {
-                pane: 'pane_namiot1_1',
+        function style_Refactored_2_0(feature) {
+            var context = {
+                feature: feature,
+                variables: {}
+            };
+            // Start of if blocks and style check logic
+            if (exp_Refactored_2rule1_eval_expression(context)) {
+                  return {
+                pane: 'pane_Refactored_2',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -151,52 +220,136 @@
                 weight: 1.0, 
                 fill: true,
                 fillOpacity: 1,
-                fillColor: 'rgba(166,206,227,1.0)',
+                fillColor: 'rgba(213,180,60,1.0)',
                 interactive: true,
+            };
+                }
+                else if (exp_Refactored_2rule2_eval_expression(context)) {
+                  return {
+                pane: 'pane_Refactored_2',
+                opacity: 1,
+                color: 'rgba(128,14,16,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(228,26,28,1.0)',
+                interactive: true,
+            };
+                }
+                else if (exp_Refactored_2rule3_eval_expression(context)) {
+                  return {
+                pane: 'pane_Refactored_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(178,223,138,1.0)',
+                interactive: true,
+            };
+                }
+                else if (exp_Refactored_2rule4_eval_expression(context)) {
+                  return {
+                pane: 'pane_Refactored_2',
+                opacity: 1,
+                color: 'rgba(38,89,128,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(28,144,153,1.0)',
+                interactive: true,
+            };
+                }
+                else if (exp_Refactored_2rule5_eval_expression(context)) {
+                  return {
+                pane: 'pane_Refactored_2',
+                opacity: 1,
+                color: 'rgba(128,62,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,127,0,1.0)',
+                interactive: true,
+            };
+                }
+            else {
+                return {
+                pane: 'pane_Refactored_2',
+                opacity: 1,
+                color: 'rgba(38,89,128,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(55,126,184,1.0)',
+                interactive: true,
+            };
             }
         }
-        map.createPane('pane_namiot1_1');
-        map.getPane('pane_namiot1_1').style.zIndex = 401;
-        map.getPane('pane_namiot1_1').style['mix-blend-mode'] = 'normal';
-        var layer_namiot1_1 = new L.geoJson(json_namiot1_1, {
+        map.createPane('pane_Refactored_2');
+        map.getPane('pane_Refactored_2').style.zIndex = 402;
+        map.getPane('pane_Refactored_2').style['mix-blend-mode'] = 'normal';
+        var layer_Refactored_2 = new L.geoJson(json_Refactored_2, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_namiot1_1',
-            layerName: 'layer_namiot1_1',
-            pane: 'pane_namiot1_1',
-            onEachFeature: pop_namiot1_1,
-            style: style_namiot1_1_0,
+            dataVar: 'json_Refactored_2',
+            layerName: 'layer_Refactored_2',
+            pane: 'pane_Refactored_2',
+            onEachFeature: pop_Refactored_2,
+            style: style_Refactored_2_0,
         });
-        bounds_group.addLayer(layer_namiot1_1);
-        map.addLayer(layer_namiot1_1);
+        bounds_group.addLayer(layer_Refactored_2);
+        map.addLayer(layer_Refactored_2);
         setBounds();
         var i = 0;
-        layer_namiot1_1.eachLayer(function(layer) {
+        layer_tekstpiknik_1.eachLayer(function(layer) {
             var context = {
                 feature: layer.feature,
                 variables: {}
             };
-            layer.bindTooltip((layer.feature.properties['Numer'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['Numer']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_namiot1_1'});
+            layer.bindTooltip((layer.feature.properties['tekst'] !== null?String('<div style="color: #323232; font-size: 13pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['tekst']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_tekstpiknik_1'});
             labels.push(layer);
             totalMarkers += 1;
               layer.added = true;
               addLabel(layer, i);
               i++;
         });
-        L.ImageOverlay.include({
-            getBounds: function () {
-                return this._bounds;
-            }
+        var i = 0;
+        layer_Refactored_2.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['Numer'] !== null?String('<div style="color: #323232; font-size: 9pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['Numer']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Refactored_2'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
         });
-        resetLabels([layer_namiot1_1]);
+        resetLabels([layer_tekstpiknik_1,layer_Refactored_2]);
         map.on("zoomend", function(){
-            resetLabels([layer_namiot1_1]);
+            resetLabels([layer_tekstpiknik_1,layer_Refactored_2]);
         });
         map.on("layeradd", function(){
-            resetLabels([layer_namiot1_1]);
+            resetLabels([layer_tekstpiknik_1,layer_Refactored_2]);
         });
         map.on("layerremove", function(){
-            resetLabels([layer_namiot1_1]);
+            resetLabels([layer_tekstpiknik_1,layer_Refactored_2]);
         });
         </script>        
     </body>

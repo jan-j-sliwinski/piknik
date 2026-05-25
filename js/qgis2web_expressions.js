@@ -754,3 +754,69 @@ function fnc__specialcol_(values, context) {
 function fnc_project_color(values, context) {
     return false;
 };
+
+
+
+function exp_Refactored_2rule1_eval_expression(context) {
+    // Stoisko = 'WC'
+
+    var feature = context.feature;
+    
+    if (feature.properties) {
+        return (feature.properties['Stoisko']  == 'WC');
+    } else {
+        return (feature['Stoisko']  == 'WC');
+    }
+}
+
+
+function exp_Refactored_2rule2_eval_expression(context) {
+    // Stoisko = 'Pogotowie'
+
+    var feature = context.feature;
+    
+    if (feature.properties) {
+        return (feature.properties['Stoisko']  == 'Pogotowie');
+    } else {
+        return (feature['Stoisko']  == 'Pogotowie');
+    }
+}
+
+
+function exp_Refactored_2rule3_eval_expression(context) {
+    // id = '8888'
+
+    var feature = context.feature;
+    
+    if (feature.properties) {
+        return (feature.properties['id']  == '8888');
+    } else {
+        return (feature['id']  == '8888');
+    }
+}
+
+
+function exp_Refactored_2rule4_eval_expression(context) {
+    // id = '5555'
+
+    var feature = context.feature;
+    
+    if (feature.properties) {
+        return (feature.properties['id']  == '5555');
+    } else {
+        return (feature['id']  == '5555');
+    }
+}
+
+
+function exp_Refactored_2rule5_eval_expression(context) {
+    // Numer = 'INFO'
+
+    var feature = context.feature;
+    
+    if (feature.properties) {
+        return (feature.properties['Numer']  == 'INFO');
+    } else {
+        return (feature['Numer']  == 'INFO');
+    }
+}
